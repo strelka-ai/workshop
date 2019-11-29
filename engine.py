@@ -22,8 +22,12 @@ def train_one_epoch(model, optimizer, data_loader, device, epoch, print_freq):
 
         lr_scheduler = utils.warmup_lr_scheduler(optimizer, warmup_iters, warmup_factor)
 
-    losses_list = []
-    accuracies_list = []
+    tr_accuracy_list = []
+    loss_classifier = []
+    loss_box_reg = []
+    loss_mask = []
+    loss_aggregate = []
+
     for images, targets in metric_logger.log_every(data_loader, print_freq, header):
         model.train()
 
@@ -64,25 +68,36 @@ def train_one_epoch(model, optimizer, data_loader, device, epoch, print_freq):
         metric_logger.update(loss=losses_reduced, **loss_dict_reduced)
         metric_logger.update(lr=optimizer.param_groups[0]["lr"])
 
+        current_accuracies_list = []
         with torch.no_grad():
             model.eval()
             outputs = model.forward(images)
 
             for i in range(0, len(pure_masks)):
                 if outputs[i]['masks'].shape[0] == 0 and len(pure_masks) > 0:
-                    accuracies_list.append(0)
+                    current_accuracies_list.append(0)
                     continue
 
                 masks1 = pure_masks[i]
                 masks2 = sum((outputs[i]['masks'].chunk(chunks=outputs[i]['masks'].shape[0], dim=0))).squeeze(0).cpu()
                 overlaps = utils.iou_masks(masks1, masks2)
-                accuracies_list.append(overlaps)
+                current_accuracies_list.append(overlaps)
 
-        metric_logger.update(accuracy=float(np.mean(accuracies_list) * 100))
-        losses_list.append(float(losses_reduced.cpu()))
+        current_accuracy = 0 if len(current_accuracies_list) == 0 else float(np.mean(current_accuracies_list))
 
+        tr_accuracy_list.append(current_accuracy)
+        loss_classifier.append(float(loss_dict_reduced['loss_classifier'].cpu().item()))
+        loss_box_reg.append(float(loss_dict_reduced['loss_box_reg'].cpu().item()))
+        loss_mask.append(float(loss_dict_reduced['loss_mask'].cpu().item()))
+        loss_aggregate.append(float(losses_reduced.cpu()))
 
-    return losses_list, accuracies_list
+    return {
+        'tr_accuracy_list': tr_accuracy_list,
+        'loss_classifier': loss_classifier,
+        'loss_box_reg': loss_box_reg,
+        'loss_mask':  loss_mask,
+        'loss_aggregate': loss_aggregate
+    }
 
 
 def _get_iou_types(model):
