@@ -113,3 +113,6 @@ weights
 
 # archives
 *.zip
+
+# tmp folder
+tmp

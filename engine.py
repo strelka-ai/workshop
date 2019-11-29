@@ -13,7 +13,7 @@ def train_one_epoch(model, optimizer, data_loader, device, epoch, print_freq):
     model.train()
     metric_logger = utils.MetricLogger(delimiter="  ")
     metric_logger.add_meter('lr', utils.SmoothedValue(window_size=1, fmt='{value:.6f}'))
-    header = 'Epoch: [{}]'.format(epoch)
+    header = 'Эпоха: [{}]'.format(epoch)
 
     lr_scheduler = None
     if epoch == 0:
@@ -49,7 +49,7 @@ def train_one_epoch(model, optimizer, data_loader, device, epoch, print_freq):
 #         print(targets[0]['boxes'])
 
         if not math.isfinite(loss_value):
-            print("Loss is {}, stopping training".format(loss_value))
+            print("Loss = {}, останавливаю обучение".format(loss_value))
             print(loss_dict_reduced)
             print(images)
             print(targets)
@@ -182,7 +182,7 @@ def evaluate(model, data_loader, device):
     cpu_device = torch.device("cpu")
     model.eval()
     metric_logger = utils.MetricLogger(delimiter="  ")
-    header = 'Validation:'
+    header = 'Валидация:'
 
     accuracies = []
     i = 0
