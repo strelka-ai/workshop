@@ -167,7 +167,7 @@ def evaluate(model, data_loader, device):
     cpu_device = torch.device("cpu")
     model.eval()
     metric_logger = utils.MetricLogger(delimiter="  ")
-    header = 'Test:'
+    header = 'Validation:'
 
     accuracies = []
     i = 0
@@ -213,8 +213,8 @@ def evaluate(model, data_loader, device):
     # gather the stats from all processes
     metric_logger.synchronize_between_processes()
     print('------')
-    print("Averaged stats:", metric_logger)
-    print('Total avg accuracy: {}%'.format(mean_acc * 100))
+    print("Усредненная статистика по валидации:", metric_logger)
+#     print('Total avg accuracy: {}%'.format(mean_acc * 100))
 
     # accumulate predictions from all images
     torch.set_num_threads(n_threads)

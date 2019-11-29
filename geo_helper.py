@@ -64,7 +64,7 @@ def merkator2num_with_relatives_3395(merkator_x, merkator_y, zoom, relative_tile
     return tile_x, tile_y, relative_x, relative_y
 
 
-def num_and_relatives2mercator_3395(tile_x, tile_y, relative_x, relative_y, zoom, relative_tile_size=256):
+def num_with_relatives2mercator_3395(tile_x, tile_y, relative_x, relative_y, zoom, relative_tile_size=256):
     """
 
     Convert tile and relative coords to merkator 3395
@@ -89,30 +89,17 @@ def num_and_relatives2mercator_3395(tile_x, tile_y, relative_x, relative_y, zoom
     return merkator_x, merkator_y
 
 
-def merkator2deg_3395(merkator_x, merkator_y):
-    '''
+def num_with_relatives2deg_3395(tile_x, tile_y, relative_x, relative_y, zoom, relative_tile_size=256):
 
-    Convert merkator into degrees using 3395 std (for Yandex Maps)
+    tile_fx = (tile_x + relative_x / relative_tile_size)
+    tile_fy = (tile_y + relative_y / relative_tile_size)
 
-    :param merkator_x:
-    :param merkator_y:
-    :return:
-    '''
+    n = 2.0 ** zoom
+    lon_deg = tile_fx / n * 360.0 - 180.0
+    lat_rad = math.atan(math.sinh(math.pi * (1 - 2 * tile_fy / n)))
+    lat_deg = math.degrees(lat_rad)
 
-    # latlong in radians
-    lat_rad = radians(lat_deg)
-    lon_rad = math.radians(lon_deg)
-
-    # reproject latlong to EPSG:3395
-    esin_lat = EXTRNC3395 * math.sin(lat_rad)
-    tan_temp = math.tan(math.pi / 4 + lat_rad / 2)
-    pow_temp = math.pow(math.tan(math.pi / 4 + math.asin(esin_lat) / 2), EXTRNC3395)
-    U = tan_temp / pow_temp
-
-    merkator_lat = RADIUS3395 * math.log(U)
-    merkator_lon = (RADIUS3395 * lon_rad)
-
-    return merkator_lon, merkator_lat
+    return lon_deg, lat_deg
 
 
 def deg2merkator_3395(lon_deg, lat_deg):
