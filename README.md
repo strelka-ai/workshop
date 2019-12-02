@@ -19,15 +19,19 @@ __Предварительные требования:__
 ## Статьи в интернет
 
 1. Неплохой обзор того что такое нейросети
+
 https://neurohive.io/ru/osnovy-data-science/osnovy-nejronnyh-setej-algoritmy-obuchenie-funkcii-aktivacii-i-poteri/
 
 2. Обзор методов оптимизации нейронных сетей, с их особенностями и параметрами
+
 https://habr.com/ru/post/318970/
 
 3. Углубление в pytorch
+
 https://m.habr.com/ru/company/piter/blog/471228/
 
-4. Краткий обхо архитектур свёрточных сетей 
+4. Краткий обзор архитектур свёрточных сетей 
+
 https://m.habr.com/ru/company/nix/blog/430524/
 
 ## Книги
